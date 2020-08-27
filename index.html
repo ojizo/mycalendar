@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        th, td { text-align: right; }
+    </style>
+</head>
+<body>
+    <h1></h1>
+    <button id="prev">&lt; 前の月</button>
+    <button id="next">次の月 &gt;</button>
+    <table>
+        <thead>
+            <th>月</th>
+            <th>火</th>
+            <th>水</th>
+            <th>木</th>
+            <th>金</th>
+            <th>土</th>
+            <th>日</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script type="module">
+        import { makeCalendar } from './modules/calendar.js';
+
+        let currentMonth = 0; // 今月を基点に何ヶ月目を表示するか (負の値: 過去, 真の値: 未来, 0: 当月)
+        let startDay = 1; // 週の始まり(0: 日 - 6: 土)
+
+        // カレンダーの出力例
+        function showCalendar(options) {
+            const calData = makeCalendar(options);
+            const tbody = document.querySelector('table tbody');
+            tbody.textContent = '';
+            calData.forEach(week => {
+                const tr = document.createElement('tr');
+                week.forEach(date => {
+                    const td = document.createElement('td');
+                    td.textContent = date;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            // 見出し
+            const nowDate = new Date();
+            const dispYear = new Date(nowDate.getFullYear(), nowDate.getMonth() + currentMonth, 1).getFullYear();
+            const dispMonth = new Date(nowDate.getFullYear(), nowDate.getMonth() + currentMonth, 1).getMonth() + 1;
+            document.querySelector('h1').textContent = `${dispYear}年${String(dispMonth).padStart(2, '0')}月`;
+        };
+        showCalendar({ currentMonth: currentMonth, startDay: startDay });
+
+        // 月の切替例
+        const prev = document.getElementById('prev');
+        const next = document.getElementById('next');
+        prev.addEventListener('click', () => {
+            currentMonth--;
+            showCalendar({ currentMonth: currentMonth, startDay: startDay });
+        });
+        next.addEventListener('click', () => {
+            currentMonth++;
+            showCalendar({ currentMonth: currentMonth, startDay: startDay });
+        });
+    </script>
+</body>
+</html>
